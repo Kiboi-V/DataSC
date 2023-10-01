@@ -1,0 +1,151 @@
+###**WEEK 1 project
+As a data scientist working ar instagram how would you analyse key performance insights in assessing the success of the IGTV product
+
+###**Step 1:
+**Description
+As a data scientist at instagram i would follow the data science process that would involve fundamental of statistcs, mathematics and programming
+
+###**Step 2:Data Collection
+I generated my data from mockaroo as a csv file with various fields
+```python
+import pyforest
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt 
+import seaborn as sbs
+pd.set_option('display.max_rows',None)
+
+data=pd.read_csv("C:/Users/User/Downloads/MOCK_DATA (2).csv")
+```
+
+###**Step 3:Data Preprocessing
+This is how i cleaned the data.
+```python
+data.dtypes
+data.head()
+data.shape
+df=data.drop(['impressions'],axis=1)
+```
+
+###Renaming
+```python
+
+df=df.rename(columns={'video_id':'Video_ID','views':'No_of_Views','average_watch_time':'Average_WatchTime','completion_rate':'Completion_Rate','click_through_rate':'Clicks_Rate','engangement_rate':'Engagement_Rate'})
+df
+```
+###drop null values
+```python
+df=df.drop(df.isna(),axis=1)
+```
+df.loc[df.duplicated()]
+
+```
+
+###**Step 4:Data Exploration
+This is how I performed EDA using diffrent approaches
+```python
+df_sorted = df.sort_values('followers', ascending=False)
+mostly_followed = df[:10]
+mostly_followed
+# Create a horizontal bar chart
+plt.barh(mostly_followed['Video_ID'], mostly_followed['followers'])
+plt.xlabel('Followers')
+plt.ylabel('Video ID')
+plt.title('Top 10 Videos by Followers')
+
+plt.show()
+
+
+```
+
+###**Step 5:Predictive Modelling
+I analysed two models
+1)
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+# Creating a copy of the DataFrame 
+most_influential_copy = most_influential.copy()
+
+# Handling missing values (NaN) in the 'shares' column in the copied DataFrame
+most_influential_copy['shares'].fillna(0, inplace=True)
+
+# Defining independent variables (X) and dependent variable (y)
+X = most_influential[['likes', 'comments', 'shares']]
+y = most_influential['Video_ID']
+
+# Splitting the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+model = LinearRegression()
+
+# Fitting the model to the training data
+model.fit(X_train, y_train)
+
+# Making predictions on the test data
+y_pred = model.predict(X_test)
+
+# Evaluating the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"Mean Squared Error (MSE): {mse:.2f}")
+print(f"R-squared (R2): {r2:.2f}")
+
+# Coefficients and intercept
+coefficients = model.coef_
+intercept = model.intercept_
+
+print(f"Coefficients: {coefficients}")
+print(f"Intercept: {intercept}")
+
+
+```
+
+2)
+```python
+#using random forest
+from sklearn.ensemble import RandomForestRegressor
+
+da=pd.read_csv("C:/Users/User/Downloads/MOCK_DATA (2).csv")
+da
+da=data.drop(['impressions'],axis=1)
+da.fillna(da.mean(), inplace=True)
+da['average_watch_time']=pd.to_datetime(da['average_watch_time'])
+# Splitting the data into features (X) and target (y)
+X = da.drop('average_watch_time', axis=1)  
+y = da['engagement_rate']  
+
+# Split the data into training and testing sets (70% train, 30% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Random Forest Regressor model
+model = RandomForestRegressor(n_estimators=100, random_state=42)  # You can adjust hyperparameters as needed
+
+# Fitting the model on the training data
+model.fit(X_train, y_train)
+
+# Making predictions on the test data
+y_pred = model.predict(X_test)
+
+# Evaluating the model's performance
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"Mean Squared Error: {mse}")
+print(f"R-squared: {r2}")
+
+```
+
+###**Step 6:Selection of the models
+I decided to go with the random forest model as it yielded positive prediction and used it in my rest ot the data.
+Random Forest:
+Mean Squared Error: 0.00918879593299292
+R-squared: 0.99998861412386
+Linear Regression:
+Mean Squared Error (MSE): 91429.19
+R-squared (R2): -3.41
+Coefficients: [ 0.79901879 -0.02785449 -0.05815464]
+Intercept: -79012.17522320009
